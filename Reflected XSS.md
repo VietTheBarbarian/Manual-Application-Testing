@@ -1,4 +1,5 @@
-![22b58730f2a5ff7a03acc6395ea4cc13.png](../_resources/22b58730f2a5ff7a03acc6395ea4cc13.png)
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/0ff5f26a-4ad0-4900-8e61-ed943fdebb50)
+
 Entering script tag. By default refer to js. 
 `<script>alert(1)</script>`
 
