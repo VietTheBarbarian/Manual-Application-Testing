@@ -1,3 +1,5 @@
+**DOM XSS in document.write sink using source location.search**
+
 Open inspector/DOM browse. Can be manipulated by js,
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/4a2396c3-d12e-4b0e-805b-85f1c2247838)
 
