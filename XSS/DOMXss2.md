@@ -1,4 +1,5 @@
 **DOM XSS in innerHTML sink using source location.search**
+
 Sink refer method of function that causes malicious js to be performed on the page
 Script tag wont work with innerHTML 
 
