@@ -8,8 +8,10 @@ Script tag wont work with innerHTML
 
 From <https://portswigger.net/web-security/cross-site-scripting/cheat-sheet> 
 
-You can also use the payload <img src='0' oneerror='alert()'>
-
+You can also use the payload 
+```
+<img src='0' oneerror='alert()'>
+```
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/baa1e158-bad4-417c-9449-09342b18b2e8)
 
 
