@@ -1,4 +1,5 @@
-Requirement 
+Requirement for csrf
+
 	• Relevant action
 	• Cookie based session handling
 	• No unpredictable request parameters 
