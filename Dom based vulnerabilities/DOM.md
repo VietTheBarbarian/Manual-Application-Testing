@@ -123,7 +123,7 @@ Exploit
 ```
 
 Our exploit will trigger when we type in a random comment again
-**Clobbering DOM attributes to bypass HTML filters**
+**Clobbering DOM attributes to bypass HTML filters(Explore more)**
 lab uses the HTMLJanitor library which is vulnerable to DOM clobbering
 
 
