@@ -1,3 +1,6 @@
+Start off with this 
+https://book.hacktricks.xyz/pentesting-web/clickjacking
+
  **Basic clickjacking with CSRF token protection**
 
 Trick user into clicking on something 
