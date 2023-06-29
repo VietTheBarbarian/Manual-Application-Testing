@@ -1,4 +1,4 @@
-**Cross-origin resource sharing **
+**Cross-origin resource sharing**
 
 
 Submitted arbitrary header on Origin:
