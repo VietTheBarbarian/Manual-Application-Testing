@@ -579,7 +579,40 @@ Copy and change our session cookie and you should have access to the user
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f02f495a-7d6f-414e-bc7e-70e451426a2b)
 
 
+**HTTP/2 request splitting via CRLF injection**
 
+
+
+
+Change path of get request to no existing path to get a 404 request
+/x
+
+
+To poison we add the following to the response header in inspector tab (shift+return)
+
+```
+Name:
+foo
+
+Value:
+bar\r\n
+\r\n
+GET /x HTTP/1.1\r\n
+Host: YOUR-LAB-ID.web-security-academy.net
+```
+
+
+Note
+If you receive some 200 responses but can't capture a 302 response even after a lot of attempts, send 10 ordinary requests to reset the connection and try again. 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-splitting-via-crlf-injection> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f0202da5-fcff-4271-88b2-5704ac1de533)
+
+Send until you get a 302 request
+/admin directory
+Copy the victim session cookie and replace it and you should be able to delete users 
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/bda93fb2-7a00-4e2e-8ce7-97ab1efff61c)
 
 
 
