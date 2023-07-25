@@ -1,3 +1,5 @@
+ Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store. 
+ 
 ***Http request smuggling, basic CL.TE vulnerability***
 Http smuggling CL/TE
 Content-Length
